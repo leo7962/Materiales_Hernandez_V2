@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Materiales_Hernandez_V2.Services.Entities
+namespace Materiales_Hernandez_V2.Services.Entities.Entities
 {
     using System;
     using System.Data.Entity;

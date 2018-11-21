@@ -4,27 +4,634 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="EntityModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
-        <EntityContainer Name="EntityModelTargetContainer" >
+    <Schema Namespace="EntityModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Clientes">
+          <Key>
+            <PropertyRef Name="Id_Cedula_Cliente" />
+          </Key>
+          <Property Name="Id_Cedula_Cliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Telefono" Type="int" Nullable="false" />
+          <Property Name="Direccion" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Correo_Electronico" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Comprobantes">
+          <Key>
+            <PropertyRef Name="IdComprobante" />
+          </Key>
+          <Property Name="IdComprobante" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FechaEmision" Type="datetime" Nullable="false" />
+          <Property Name="Total" Type="float" Nullable="false" />
+          <Property Name="Producto_IdProducto" Type="int" Nullable="false" />
+          <Property Name="Empleadoes_IdEmpleado" Type="int" Nullable="false" />
+          <Property Name="Pedido_IdPedido" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Comprobantes_Boleta">
+          <Key>
+            <PropertyRef Name="IdComprobante" />
+          </Key>
+          <Property Name="NumeroBoleta" Type="int" Nullable="false" />
+          <Property Name="IdComprobante" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Comprobantes_DetalleComprobante">
+          <Key>
+            <PropertyRef Name="IdComprobante" />
+          </Key>
+          <Property Name="Cantidad" Type="int" Nullable="false" />
+          <Property Name="Impuesto" Type="float" Nullable="false" />
+          <Property Name="IdComprobante" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Comprobantes_Factura">
+          <Key>
+            <PropertyRef Name="IdComprobante" />
+          </Key>
+          <Property Name="NroFactura" Type="int" Nullable="false" />
+          <Property Name="Subtotal" Type="float" Nullable="false" />
+          <Property Name="Fecha_Cancelacion" Type="datetime" Nullable="false" />
+          <Property Name="IdComprobante" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Cotización">
+          <Key>
+            <PropertyRef Name="IdCotizacion" />
+          </Key>
+          <Property Name="IdCotizacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FechaEmision" Type="datetime" Nullable="false" />
+          <Property Name="Condiciones" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Producto_IdProducto" Type="int" />
+          <Property Name="Clientes_Id_Cedula_Cliente" Type="int" Nullable="false" />
+          <Property Name="Empleadoes_IdEmpleado" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Empleadoes">
+          <Key>
+            <PropertyRef Name="IdEmpleado" />
+          </Key>
+          <Property Name="IdEmpleado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombres" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Apellidos" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Cargo" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="FechaIngreso" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Pedidoes">
+          <Key>
+            <PropertyRef Name="IdPedido" />
+          </Key>
+          <Property Name="IdPedido" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FechaEmision" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CondPago" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Observaciones" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Empleadoes_IdEmpleado" Type="int" Nullable="false" />
+          <Property Name="Clientes_Id_Cedula_Cliente" Type="int" Nullable="false" />
+          <Property Name="Producto_IdProducto" Type="int" />
+        </EntityType>
+        <EntityType Name="Productoes">
+          <Key>
+            <PropertyRef Name="IdProducto" />
+          </Key>
+          <Property Name="IdProducto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="PrecioVenta" Type="float" Nullable="false" />
+          <Property Name="Stock" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Boleta_inherits_Comprobante">
+          <End Role="Comprobantes" Type="Self.Comprobantes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Comprobantes_Boleta" Type="Self.Comprobantes_Boleta" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Comprobantes">
+              <PropertyRef Name="IdComprobante" />
+            </Principal>
+            <Dependent Role="Comprobantes_Boleta">
+              <PropertyRef Name="IdComprobante" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ComprobanteEmpleado">
+          <End Role="Empleadoes" Type="Self.Empleadoes" Multiplicity="1" />
+          <End Role="Comprobantes" Type="Self.Comprobantes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empleadoes">
+              <PropertyRef Name="IdEmpleado" />
+            </Principal>
+            <Dependent Role="Comprobantes">
+              <PropertyRef Name="Empleadoes_IdEmpleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CotizaciónCliente">
+          <End Role="Clientes" Type="Self.Clientes" Multiplicity="1" />
+          <End Role="Cotización" Type="Self.Cotización" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="Id_Cedula_Cliente" />
+            </Principal>
+            <Dependent Role="Cotización">
+              <PropertyRef Name="Clientes_Id_Cedula_Cliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CotizaciónEmpleado">
+          <End Role="Empleadoes" Type="Self.Empleadoes" Multiplicity="1" />
+          <End Role="Cotización" Type="Self.Cotización" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empleadoes">
+              <PropertyRef Name="IdEmpleado" />
+            </Principal>
+            <Dependent Role="Cotización">
+              <PropertyRef Name="Empleadoes_IdEmpleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DetalleComprobante_inherits_Comprobante">
+          <End Role="Comprobantes" Type="Self.Comprobantes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Comprobantes_DetalleComprobante" Type="Self.Comprobantes_DetalleComprobante" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Comprobantes">
+              <PropertyRef Name="IdComprobante" />
+            </Principal>
+            <Dependent Role="Comprobantes_DetalleComprobante">
+              <PropertyRef Name="IdComprobante" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Factura_inherits_Comprobante">
+          <End Role="Comprobantes" Type="Self.Comprobantes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Comprobantes_Factura" Type="Self.Comprobantes_Factura" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Comprobantes">
+              <PropertyRef Name="IdComprobante" />
+            </Principal>
+            <Dependent Role="Comprobantes_Factura">
+              <PropertyRef Name="IdComprobante" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PedidoCliente">
+          <End Role="Clientes" Type="Self.Clientes" Multiplicity="1" />
+          <End Role="Pedidoes" Type="Self.Pedidoes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="Id_Cedula_Cliente" />
+            </Principal>
+            <Dependent Role="Pedidoes">
+              <PropertyRef Name="Clientes_Id_Cedula_Cliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PedidoComprobante">
+          <End Role="Pedidoes" Type="Self.Pedidoes" Multiplicity="1" />
+          <End Role="Comprobantes" Type="Self.Comprobantes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pedidoes">
+              <PropertyRef Name="IdPedido" />
+            </Principal>
+            <Dependent Role="Comprobantes">
+              <PropertyRef Name="Pedido_IdPedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PedidoEmpleado">
+          <End Role="Empleadoes" Type="Self.Empleadoes" Multiplicity="1" />
+          <End Role="Pedidoes" Type="Self.Pedidoes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empleadoes">
+              <PropertyRef Name="IdEmpleado" />
+            </Principal>
+            <Dependent Role="Pedidoes">
+              <PropertyRef Name="Empleadoes_IdEmpleado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductoComprobante">
+          <End Role="Productoes" Type="Self.Productoes" Multiplicity="1" />
+          <End Role="Comprobantes" Type="Self.Comprobantes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productoes">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="Comprobantes">
+              <PropertyRef Name="Producto_IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductoCotización">
+          <End Role="Productoes" Type="Self.Productoes" Multiplicity="0..1" />
+          <End Role="Cotización" Type="Self.Cotización" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productoes">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="Cotización">
+              <PropertyRef Name="Producto_IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductoPedido">
+          <End Role="Productoes" Type="Self.Productoes" Multiplicity="0..1" />
+          <End Role="Pedidoes" Type="Self.Pedidoes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productoes">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="Pedidoes">
+              <PropertyRef Name="Producto_IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EntityModelStoreContainer">
+          <EntitySet Name="Clientes" EntityType="Self.Clientes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Comprobantes" EntityType="Self.Comprobantes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Comprobantes_Boleta" EntityType="Self.Comprobantes_Boleta" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Comprobantes_DetalleComprobante" EntityType="Self.Comprobantes_DetalleComprobante" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Comprobantes_Factura" EntityType="Self.Comprobantes_Factura" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cotización" EntityType="Self.Cotización" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Empleadoes" EntityType="Self.Empleadoes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Pedidoes" EntityType="Self.Pedidoes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Productoes" EntityType="Self.Productoes" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Boleta_inherits_Comprobante" Association="Self.FK_Boleta_inherits_Comprobante">
+            <End Role="Comprobantes" EntitySet="Comprobantes" />
+            <End Role="Comprobantes_Boleta" EntitySet="Comprobantes_Boleta" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ComprobanteEmpleado" Association="Self.FK_ComprobanteEmpleado">
+            <End Role="Empleadoes" EntitySet="Empleadoes" />
+            <End Role="Comprobantes" EntitySet="Comprobantes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CotizaciónCliente" Association="Self.FK_CotizaciónCliente">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="Cotización" EntitySet="Cotización" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CotizaciónEmpleado" Association="Self.FK_CotizaciónEmpleado">
+            <End Role="Empleadoes" EntitySet="Empleadoes" />
+            <End Role="Cotización" EntitySet="Cotización" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DetalleComprobante_inherits_Comprobante" Association="Self.FK_DetalleComprobante_inherits_Comprobante">
+            <End Role="Comprobantes" EntitySet="Comprobantes" />
+            <End Role="Comprobantes_DetalleComprobante" EntitySet="Comprobantes_DetalleComprobante" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Factura_inherits_Comprobante" Association="Self.FK_Factura_inherits_Comprobante">
+            <End Role="Comprobantes" EntitySet="Comprobantes" />
+            <End Role="Comprobantes_Factura" EntitySet="Comprobantes_Factura" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PedidoCliente" Association="Self.FK_PedidoCliente">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="Pedidoes" EntitySet="Pedidoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PedidoComprobante" Association="Self.FK_PedidoComprobante">
+            <End Role="Pedidoes" EntitySet="Pedidoes" />
+            <End Role="Comprobantes" EntitySet="Comprobantes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PedidoEmpleado" Association="Self.FK_PedidoEmpleado">
+            <End Role="Empleadoes" EntitySet="Empleadoes" />
+            <End Role="Pedidoes" EntitySet="Pedidoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductoComprobante" Association="Self.FK_ProductoComprobante">
+            <End Role="Productoes" EntitySet="Productoes" />
+            <End Role="Comprobantes" EntitySet="Comprobantes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductoCotización" Association="Self.FK_ProductoCotización">
+            <End Role="Productoes" EntitySet="Productoes" />
+            <End Role="Cotización" EntitySet="Cotización" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductoPedido" Association="Self.FK_ProductoPedido">
+            <End Role="Productoes" EntitySet="Productoes" />
+            <End Role="Pedidoes" EntitySet="Pedidoes" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="EntityModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
         <EntityContainer Name="EntityModelContainer" annotation:LazyLoadingEnabled="true">
-        </EntityContainer>
+          <EntitySet Name="Cotización" EntityType="EntityModel.Cotización" />
+          <EntitySet Name="Clientes" EntityType="EntityModel.Cliente" />
+          <EntitySet Name="Pedidoes" EntityType="EntityModel.Pedido" />
+          <EntitySet Name="Productoes" EntityType="EntityModel.Producto" />
+          <EntitySet Name="Empleadoes" EntityType="EntityModel.Empleado" />
+          <EntitySet Name="Comprobantes" EntityType="EntityModel.Comprobante" />
+          <AssociationSet Name="ProductoComprobante" Association="EntityModel.ProductoComprobante">
+            <End Role="Producto" EntitySet="Productoes" />
+            <End Role="Comprobante" EntitySet="Comprobantes" />
+          </AssociationSet>
+          <AssociationSet Name="ProductoCotización" Association="EntityModel.ProductoCotización">
+            <End Role="Producto" EntitySet="Productoes" />
+            <End Role="Cotización" EntitySet="Cotización" />
+          </AssociationSet>
+          <AssociationSet Name="CotizaciónCliente" Association="EntityModel.CotizaciónCliente">
+            <End Role="Cotización" EntitySet="Cotización" />
+            <End Role="Cliente" EntitySet="Clientes" />
+          </AssociationSet>
+          <AssociationSet Name="CotizaciónEmpleado" Association="EntityModel.CotizaciónEmpleado">
+            <End Role="Cotización" EntitySet="Cotización" />
+            <End Role="Empleado" EntitySet="Empleadoes" />
+          </AssociationSet>
+          <AssociationSet Name="PedidoEmpleado" Association="EntityModel.PedidoEmpleado">
+            <End Role="Pedido" EntitySet="Pedidoes" />
+            <End Role="Empleado" EntitySet="Empleadoes" />
+          </AssociationSet>
+          <AssociationSet Name="PedidoCliente" Association="EntityModel.PedidoCliente">
+            <End Role="Pedido" EntitySet="Pedidoes" />
+            <End Role="Cliente" EntitySet="Clientes" />
+          </AssociationSet>
+          <AssociationSet Name="ComprobanteEmpleado" Association="EntityModel.ComprobanteEmpleado">
+            <End Role="Comprobante" EntitySet="Comprobantes" />
+            <End Role="Empleado" EntitySet="Empleadoes" />
+          </AssociationSet>
+          <AssociationSet Name="PedidoComprobante" Association="EntityModel.PedidoComprobante">
+            <End Role="Pedido" EntitySet="Pedidoes" />
+            <End Role="Comprobante" EntitySet="Comprobantes" />
+          </AssociationSet>
+          <AssociationSet Name="ProductoPedido" Association="EntityModel.ProductoPedido">
+            <End Role="Producto" EntitySet="Productoes" />
+            <End Role="Pedido" EntitySet="Pedidoes" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="Cotización">
+          <Key>
+            <PropertyRef Name="IdCotizacion" />
+          </Key>
+          <Property Name="IdCotizacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FechaEmision" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Condiciones" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Producto" Relationship="EntityModel.ProductoCotización" FromRole="Cotización" ToRole="Producto" />
+          <NavigationProperty Name="Clientes" Relationship="EntityModel.CotizaciónCliente" FromRole="Cotización" ToRole="Cliente" />
+          <NavigationProperty Name="Empleadoes" Relationship="EntityModel.CotizaciónEmpleado" FromRole="Cotización" ToRole="Empleado" />
+        </EntityType>
+        <EntityType Name="Cliente">
+          <Key>
+            <PropertyRef Name="Id_Cedula_Cliente" />
+          </Key>
+          <Property Name="Id_Cedula_Cliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Telefono" Type="Int32" Nullable="false" />
+          <Property Name="Direccion" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Correo_Electronico" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Cotización" Relationship="EntityModel.CotizaciónCliente" FromRole="Cliente" ToRole="Cotización" />
+          <NavigationProperty Name="Pedido" Relationship="EntityModel.PedidoCliente" FromRole="Cliente" ToRole="Pedido" />
+        </EntityType>
+        <EntityType Name="Pedido">
+          <Key>
+            <PropertyRef Name="IdPedido" />
+          </Key>
+          <Property Name="IdPedido" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FechaEmision" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="CondPago" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Observaciones" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Empleadoes" Relationship="EntityModel.PedidoEmpleado" FromRole="Pedido" ToRole="Empleado" />
+          <NavigationProperty Name="Clientes" Relationship="EntityModel.PedidoCliente" FromRole="Pedido" ToRole="Cliente" />
+          <NavigationProperty Name="Comprobantes" Relationship="EntityModel.PedidoComprobante" FromRole="Pedido" ToRole="Comprobante" />
+          <NavigationProperty Name="Producto" Relationship="EntityModel.ProductoPedido" FromRole="Pedido" ToRole="Producto" />
+        </EntityType>
+        <EntityType Name="Producto">
+          <Key>
+            <PropertyRef Name="IdProducto" />
+          </Key>
+          <Property Name="IdProducto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="PrecioVenta" Type="Double" Nullable="false" />
+          <Property Name="Stock" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Comprobantes" Relationship="EntityModel.ProductoComprobante" FromRole="Producto" ToRole="Comprobante" />
+          <NavigationProperty Name="Cotización" Relationship="EntityModel.ProductoCotización" FromRole="Producto" ToRole="Cotización" />
+          <NavigationProperty Name="Pedidoes" Relationship="EntityModel.ProductoPedido" FromRole="Producto" ToRole="Pedido" />
+        </EntityType>
+        <EntityType Name="Empleado">
+          <Key>
+            <PropertyRef Name="IdEmpleado" />
+          </Key>
+          <Property Name="IdEmpleado" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombres" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Apellidos" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Cargo" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="FechaIngreso" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Cotización" Relationship="EntityModel.CotizaciónEmpleado" FromRole="Empleado" ToRole="Cotización" />
+          <NavigationProperty Name="Pedido" Relationship="EntityModel.PedidoEmpleado" FromRole="Empleado" ToRole="Pedido" />
+          <NavigationProperty Name="Comprobante" Relationship="EntityModel.ComprobanteEmpleado" FromRole="Empleado" ToRole="Comprobante" />
+        </EntityType>
+        <EntityType Name="Comprobante">
+          <Key>
+            <PropertyRef Name="IdComprobante" />
+          </Key>
+          <Property Name="IdComprobante" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FechaEmision" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Total" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Producto" Relationship="EntityModel.ProductoComprobante" FromRole="Comprobante" ToRole="Producto" />
+          <NavigationProperty Name="Empleadoes" Relationship="EntityModel.ComprobanteEmpleado" FromRole="Comprobante" ToRole="Empleado" />
+          <NavigationProperty Name="Pedido" Relationship="EntityModel.PedidoComprobante" FromRole="Comprobante" ToRole="Pedido" />
+        </EntityType>
+        <EntityType Name="Boleta" BaseType="EntityModel.Comprobante" >
+          <Property Name="NumeroBoleta" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Factura" BaseType="EntityModel.Comprobante" >
+          <Property Name="NroFactura" Type="Int32" Nullable="false" />
+          <Property Name="Subtotal" Type="Double" Nullable="false" />
+          <Property Name="Fecha_Cancelacion" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <Association Name="ProductoComprobante">
+          <End Type="EntityModel.Producto" Role="Producto" Multiplicity="1" />
+          <End Type="EntityModel.Comprobante" Role="Comprobante" Multiplicity="*" />
+        </Association>
+        <Association Name="ProductoCotización">
+          <End Type="EntityModel.Producto" Role="Producto" Multiplicity="0..1" />
+          <End Type="EntityModel.Cotización" Role="Cotización" Multiplicity="*" />
+        </Association>
+        <Association Name="CotizaciónCliente">
+          <End Type="EntityModel.Cotización" Role="Cotización" Multiplicity="0..1" />
+          <End Type="EntityModel.Cliente" Role="Cliente" Multiplicity="1" />
+        </Association>
+        <Association Name="CotizaciónEmpleado">
+          <End Type="EntityModel.Cotización" Role="Cotización" Multiplicity="*" />
+          <End Type="EntityModel.Empleado" Role="Empleado" Multiplicity="1" />
+        </Association>
+        <Association Name="PedidoEmpleado">
+          <End Type="EntityModel.Pedido" Role="Pedido" Multiplicity="0..1" />
+          <End Type="EntityModel.Empleado" Role="Empleado" Multiplicity="1" />
+        </Association>
+        <Association Name="PedidoCliente">
+          <End Type="EntityModel.Pedido" Role="Pedido" Multiplicity="0..1" />
+          <End Type="EntityModel.Cliente" Role="Cliente" Multiplicity="1" />
+        </Association>
+        <Association Name="ComprobanteEmpleado">
+          <End Type="EntityModel.Comprobante" Role="Comprobante" Multiplicity="0..1" />
+          <End Type="EntityModel.Empleado" Role="Empleado" Multiplicity="1" />
+        </Association>
+        <Association Name="PedidoComprobante">
+          <End Type="EntityModel.Pedido" Role="Pedido" Multiplicity="1" />
+          <End Type="EntityModel.Comprobante" Role="Comprobante" Multiplicity="0..1" />
+        </Association>
+        <Association Name="ProductoPedido">
+          <End Type="EntityModel.Producto" Role="Producto" Multiplicity="0..1" />
+          <End Type="EntityModel.Pedido" Role="Pedido" Multiplicity="*" />
+        </Association>
+        <EntityType Name="DetalleComprobante" BaseType="EntityModel.Comprobante" >
+          <Property Name="Cantidad" Type="Int32" Nullable="false" />
+          <Property Name="Impuesto" Type="Double" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
-        <Alias Key="Model" Value="EntityModel" />
-        <Alias Key="Target" Value="EntityModel.Store" />
-        <EntityContainerMapping CdmEntityContainer="EntityModelContainer" StorageEntityContainer="EntityModelTargetContainer">
-        </EntityContainerMapping>
-      </Mapping>
-    </edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EntityModelStoreContainer" CdmEntityContainer="EntityModelContainer">
+    <EntitySetMapping Name="Cotización">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.Cotización)">
+        <MappingFragment StoreEntitySet="Cotización">
+          <ScalarProperty Name="IdCotizacion" ColumnName="IdCotizacion" />
+          <ScalarProperty Name="FechaEmision" ColumnName="FechaEmision" />
+          <ScalarProperty Name="Condiciones" ColumnName="Condiciones" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Clientes">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.Cliente)">
+        <MappingFragment StoreEntitySet="Clientes">
+          <ScalarProperty Name="Id_Cedula_Cliente" ColumnName="Id_Cedula_Cliente" />
+          <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+          <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+          <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+          <ScalarProperty Name="Correo_Electronico" ColumnName="Correo_Electronico" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Pedidoes">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.Pedido)">
+        <MappingFragment StoreEntitySet="Pedidoes">
+          <ScalarProperty Name="IdPedido" ColumnName="IdPedido" />
+          <ScalarProperty Name="FechaEmision" ColumnName="FechaEmision" />
+          <ScalarProperty Name="CondPago" ColumnName="CondPago" />
+          <ScalarProperty Name="Observaciones" ColumnName="Observaciones" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Productoes">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.Producto)">
+        <MappingFragment StoreEntitySet="Productoes">
+          <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+          <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+          <ScalarProperty Name="PrecioVenta" ColumnName="PrecioVenta" />
+          <ScalarProperty Name="Stock" ColumnName="Stock" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Empleadoes">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.Empleado)">
+        <MappingFragment StoreEntitySet="Empleadoes">
+          <ScalarProperty Name="IdEmpleado" ColumnName="IdEmpleado" />
+          <ScalarProperty Name="Nombres" ColumnName="Nombres" />
+          <ScalarProperty Name="Apellidos" ColumnName="Apellidos" />
+          <ScalarProperty Name="Cargo" ColumnName="Cargo" />
+          <ScalarProperty Name="FechaIngreso" ColumnName="FechaIngreso" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Comprobantes">
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.Comprobante)">
+        <MappingFragment StoreEntitySet="Comprobantes">
+          <ScalarProperty Name="IdComprobante" ColumnName="IdComprobante" />
+          <ScalarProperty Name="FechaEmision" ColumnName="FechaEmision" />
+          <ScalarProperty Name="Total" ColumnName="Total" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.Boleta)">
+        <MappingFragment StoreEntitySet="Comprobantes_Boleta">
+          <ScalarProperty Name="IdComprobante" ColumnName="IdComprobante" />
+          <ScalarProperty Name="NumeroBoleta" ColumnName="NumeroBoleta" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.Factura)">
+        <MappingFragment StoreEntitySet="Comprobantes_Factura">
+          <ScalarProperty Name="IdComprobante" ColumnName="IdComprobante" />
+          <ScalarProperty Name="NroFactura" ColumnName="NroFactura" />
+          <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
+          <ScalarProperty Name="Fecha_Cancelacion" ColumnName="Fecha_Cancelacion" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(EntityModel.DetalleComprobante)">
+        <MappingFragment StoreEntitySet="Comprobantes_DetalleComprobante">
+          <ScalarProperty Name="IdComprobante" ColumnName="IdComprobante" />
+          <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+          <ScalarProperty Name="Impuesto" ColumnName="Impuesto" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="ProductoComprobante" TypeName="EntityModel.ProductoComprobante" StoreEntitySet="Comprobantes">
+      <EndProperty Name="Producto">
+        <ScalarProperty Name="IdProducto" ColumnName="Producto_IdProducto" />
+      </EndProperty>
+      <EndProperty Name="Comprobante">
+        <ScalarProperty Name="IdComprobante" ColumnName="IdComprobante" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ProductoCotización" TypeName="EntityModel.ProductoCotización" StoreEntitySet="Cotización">
+      <EndProperty Name="Producto">
+        <ScalarProperty Name="IdProducto" ColumnName="Producto_IdProducto" />
+      </EndProperty>
+      <EndProperty Name="Cotización">
+        <ScalarProperty Name="IdCotizacion" ColumnName="IdCotizacion" />
+      </EndProperty>
+      <Condition ColumnName="Producto_IdProducto" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="CotizaciónCliente" TypeName="EntityModel.CotizaciónCliente" StoreEntitySet="Cotización">
+      <EndProperty Name="Cliente">
+        <ScalarProperty Name="Id_Cedula_Cliente" ColumnName="Clientes_Id_Cedula_Cliente" />
+      </EndProperty>
+      <EndProperty Name="Cotización">
+        <ScalarProperty Name="IdCotizacion" ColumnName="IdCotizacion" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="CotizaciónEmpleado" TypeName="EntityModel.CotizaciónEmpleado" StoreEntitySet="Cotización">
+      <EndProperty Name="Empleado">
+        <ScalarProperty Name="IdEmpleado" ColumnName="Empleadoes_IdEmpleado" />
+      </EndProperty>
+      <EndProperty Name="Cotización">
+        <ScalarProperty Name="IdCotizacion" ColumnName="IdCotizacion" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="PedidoEmpleado" TypeName="EntityModel.PedidoEmpleado" StoreEntitySet="Pedidoes">
+      <EndProperty Name="Empleado">
+        <ScalarProperty Name="IdEmpleado" ColumnName="Empleadoes_IdEmpleado" />
+      </EndProperty>
+      <EndProperty Name="Pedido">
+        <ScalarProperty Name="IdPedido" ColumnName="IdPedido" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="PedidoCliente" TypeName="EntityModel.PedidoCliente" StoreEntitySet="Pedidoes">
+      <EndProperty Name="Cliente">
+        <ScalarProperty Name="Id_Cedula_Cliente" ColumnName="Clientes_Id_Cedula_Cliente" />
+      </EndProperty>
+      <EndProperty Name="Pedido">
+        <ScalarProperty Name="IdPedido" ColumnName="IdPedido" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ComprobanteEmpleado" TypeName="EntityModel.ComprobanteEmpleado" StoreEntitySet="Comprobantes">
+      <EndProperty Name="Empleado">
+        <ScalarProperty Name="IdEmpleado" ColumnName="Empleadoes_IdEmpleado" />
+      </EndProperty>
+      <EndProperty Name="Comprobante">
+        <ScalarProperty Name="IdComprobante" ColumnName="IdComprobante" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="PedidoComprobante" TypeName="EntityModel.PedidoComprobante" StoreEntitySet="Comprobantes">
+      <EndProperty Name="Pedido">
+        <ScalarProperty Name="IdPedido" ColumnName="Pedido_IdPedido" />
+      </EndProperty>
+      <EndProperty Name="Comprobante">
+        <ScalarProperty Name="IdComprobante" ColumnName="IdComprobante" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ProductoPedido" TypeName="EntityModel.ProductoPedido" StoreEntitySet="Pedidoes">
+      <EndProperty Name="Producto">
+        <ScalarProperty Name="IdProducto" ColumnName="Producto_IdProducto" />
+      </EndProperty>
+      <EndProperty Name="Pedido">
+        <ScalarProperty Name="IdPedido" ColumnName="IdPedido" />
+      </EndProperty>
+      <Condition ColumnName="Producto_IdProducto" IsNull="false" />
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
@@ -38,12 +645,37 @@
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="True" />
         
-        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         
       </DesignerInfoPropertySet>
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
+      <Diagram DiagramId="6936442e03d34ac09fa9c09d858dea29" Name="Diagram1" ZoomLevel="102" >
+        <EntityTypeShape EntityType="EntityModel.Cotización" Width="1.5" PointX="3.875" PointY="10.5" />
+        <EntityTypeShape EntityType="EntityModel.Cliente" Width="1.5" PointX="6.125" PointY="8.25" />
+        <EntityTypeShape EntityType="EntityModel.Pedido" Width="1.5" PointX="3.875" PointY="6.25" />
+        <EntityTypeShape EntityType="EntityModel.Producto" Width="1.5" PointX="1.625" PointY="6.375" />
+        <EntityTypeShape EntityType="EntityModel.Empleado" Width="1.5" PointX="8.375" PointY="8.25" />
+        <EntityTypeShape EntityType="EntityModel.Comprobante" Width="1.5" PointX="0.75" PointY="9.5" />
+        <EntityTypeShape EntityType="EntityModel.Boleta" Width="1.5" PointX="0.75" PointY="12.5" />
+        <InheritanceConnector EntityType="EntityModel.Boleta" />
+        <EntityTypeShape EntityType="EntityModel.Factura" Width="1.5" PointX="7" PointY="12.5" />
+        <InheritanceConnector EntityType="EntityModel.Factura" />
+        <AssociationConnector Association="EntityModel.ProductoComprobante" />
+        <AssociationConnector Association="EntityModel.ProductoCotización" />
+        <AssociationConnector Association="EntityModel.CotizaciónCliente" />
+        <AssociationConnector Association="EntityModel.CotizaciónEmpleado" />
+        <AssociationConnector Association="EntityModel.PedidoEmpleado" />
+        <AssociationConnector Association="EntityModel.PedidoCliente" />
+        <AssociationConnector Association="EntityModel.ComprobanteEmpleado" />
+        <AssociationConnector Association="EntityModel.PedidoComprobante" />
+        <AssociationConnector Association="EntityModel.ProductoPedido" />
+        <EntityTypeShape EntityType="EntityModel.DetalleComprobante" Width="1.5" PointX="9.25" PointY="12.5" />
+        <InheritanceConnector EntityType="EntityModel.DetalleComprobante" />
+      </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>
